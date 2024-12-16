@@ -5,8 +5,9 @@ import lombok.Data;
 import java.util.UUID;
 
 @Data
-public class OrderDTO {
+public class OrdehistoryREQDTO {
     private UUID userId;
-    private UUID productId;
-    private int quantity;
+    private int page;
+    private int pageSize;
+    private String direction;
 }

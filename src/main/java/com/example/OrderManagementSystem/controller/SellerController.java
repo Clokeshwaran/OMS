@@ -3,6 +3,7 @@ package com.example.OrderManagementSystem.controller;
 import com.example.OrderManagementSystem.controllerInterface.SellerControllerInterface;
 import com.example.OrderManagementSystem.dto.CreateProductDTO;
 import com.example.OrderManagementSystem.dto.NewUserDTO;
+import com.example.OrderManagementSystem.dto.OrdehistoryREQDTO;
 import com.example.OrderManagementSystem.dto.SellerRegisterDTO;
 import com.example.OrderManagementSystem.service.SellerService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,9 +35,9 @@ public class SellerController implements SellerControllerInterface {
     }
 
     @Override
-    public ResponseEntity<?> ListProducts(UUID id) {
+    public ResponseEntity<?> ListProducts(OrdehistoryREQDTO ordehistoryREQDTO) {
         return ResponseEntity.status(HttpStatus.OK)
-                .body(sellerService.listProducts(id));
+                .body(sellerService.listProducts(ordehistoryREQDTO));
     }
 
     @Override

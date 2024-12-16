@@ -12,7 +12,7 @@ public interface SellerService {
 
     public SellerDataDTO sellerData(UUID id);
 
-    public List<ProductsListDTO> listProducts(UUID id);
+    public List<ProductsListDTO> listProducts(OrdehistoryREQDTO ordehistoryREQDTO);
 
     public String sellerCreateProduct(CreateProductDTO createProductDTO);
 

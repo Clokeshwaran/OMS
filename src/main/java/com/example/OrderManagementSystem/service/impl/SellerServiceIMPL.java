@@ -1,10 +1,7 @@
 package com.example.OrderManagementSystem.service.impl;
 
 import com.example.OrderManagementSystem.constant.Constant;
-import com.example.OrderManagementSystem.dto.CreateProductDTO;
-import com.example.OrderManagementSystem.dto.ProductsListDTO;
-import com.example.OrderManagementSystem.dto.SellerDataDTO;
-import com.example.OrderManagementSystem.dto.SellerRegisterDTO;
+import com.example.OrderManagementSystem.dto.*;
 import com.example.OrderManagementSystem.entity.ProductEntity;
 import com.example.OrderManagementSystem.entity.SellerEntity;
 import com.example.OrderManagementSystem.repository.ProductEntityRepository;
@@ -62,19 +59,25 @@ public class SellerServiceIMPL implements SellerService {
     }
 
     @Override
-    public List<ProductsListDTO> listProducts(UUID id) {
+    public List<ProductsListDTO> listProducts(OrdehistoryREQDTO ordehistoryREQDTO) {
 //        List<ProductsListDTO> productsListDTOList = productEntityRepository.findAllBySellerId_id(id).stream()
 //                .map(productEntity -> modelMapper.map(productEntity, ProductsListDTO.class))
 //                .collect(Collectors.toList())
-        return productEntityRepository.findAllBySellerId_SellerId(id).stream()
+
+
+        return productEntityRepository.findAllBySellerId_SellerId(ordehistoryREQDTO.getUserId()).stream()
                 .map(productEntity -> modelMapper.map(productEntity, ProductsListDTO.class))
                 .collect(Collectors.toList());
     }
 
     @Override
     public String sellerCreateProduct(CreateProductDTO createProductDTO) {
-        ProductEntity productEntity = modelMapper.map(createProductDTO, ProductEntity.class);
+        ProductEntity productEntity = new ProductEntity();
         productEntity.setProductId(UUID.randomUUID());
+        productEntity.setName(createProductDTO.getName());
+        productEntity.setPrice(createProductDTO.getPrice());
+        productEntity.setSellerId(sellerEntityRepository.findById(createProductDTO.getSellerId()).get());
+
         productEntityRepository.save(productEntity);
         return "Product created success.";
     }
