@@ -10,9 +10,9 @@ import org.springframework.web.bind.annotation.RequestHeader;
 
 public interface OrderManagementControllerInterface {
     @PostMapping("/new-order")
-    ResponseEntity<?> PlaceOrder(@RequestBody OrderDTO orderDTO, @RequestHeader(value = "Authorization") String token);
+    ResponseEntity<?> PlaceOrder(@RequestBody OrderDTO orderDTO, @RequestHeader(value = "Authorization", required = false) String token);
 
-    @PostMapping("/order-history/{id}")
+    @PostMapping("/order-history")
     ResponseEntity<?> orderHistory(@RequestBody OrdehistoryREQDTO ordehistoryREQDTO);//@RequestHeader(value = "Authorization") String token);
 
     @PostMapping("/user-order-data")

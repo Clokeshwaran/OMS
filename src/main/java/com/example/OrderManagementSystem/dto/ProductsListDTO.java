@@ -8,5 +8,5 @@ import java.util.UUID;
 public class ProductsListDTO {
     private UUID id;
     private String name;
-    private int price;
+    private double price;
 }

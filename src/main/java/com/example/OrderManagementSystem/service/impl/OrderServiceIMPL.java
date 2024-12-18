@@ -59,12 +59,19 @@ public class OrderServiceIMPL implements OrderService {
             return ResponseEntity.status(HttpStatus.OK)
                     .body("User not fount");
         }
+        Optional<SellerEntity> seller = sellerEntityRepository.findById(orderDTO.getSellerId());
+        if(seller.isEmpty()){
+            return ResponseEntity.status(HttpStatus.OK)
+                    .body("seller not fount");
+        }
+
         OrderEntity orderEntity = new OrderEntity();
         LocalDateTime currentDate = LocalDateTime.now();
         orderEntity.setOrderDate(currentDate);
         orderEntity.setProductId(productEntity.get());
         orderEntity.setUserId(user.get());
         orderEntity.setQuantity(orderDTO.getQuantity());
+        orderEntity.setSellerId(seller.get());
         orderEntity.setOrderId(UUID.randomUUID());
 
         orderEntityRepository.save(orderEntity);
@@ -83,8 +90,15 @@ public class OrderServiceIMPL implements OrderService {
 
         Pageable pageable = PageRequest.of(ordehistoryREQDTO.getPage(), ordehistoryREQDTO.getPageSize(), sort);
 
+
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(orderEntityRepository.findAllByUserId_UserId(ordehistoryREQDTO.getId(), pageable).stream()
-                .map(productEntity -> modelMapper.map(productEntity, ProductsListDTO.class))
+                .map(productEntity -> {
+                    ProductsListDTO productsListDTO = new ProductsListDTO();//modelMapper.map(productEntity, ProductsListDTO.class);
+                    productsListDTO.setName(productEntity.getProductId().getName()); // Set product name
+                    productsListDTO.setId(productEntity.getProductId().getProductId());       // Set user name
+                    productsListDTO.setPrice(productEntity.getProductId().getPrice());
+                    return productsListDTO;
+                })
                 .collect(Collectors.toList()));
     }
 
@@ -102,7 +116,7 @@ public class OrderServiceIMPL implements OrderService {
                 .findAllBySellerId_SellerId(ordehistoryREQDTO.getId(), pageable)
                 .stream()
                 .map(productEntity -> {
-                    UserOrderDTO dto = new UserOrderDTO();
+                    UserOrderDTO dto = modelMapper.map(productEntity, UserOrderDTO.class);
                     dto.setProductName(productEntity.getProductId().getName()); // Set product name
                     dto.setUserName(productEntity.getUserId().getName());       // Set user name
                     dto.setProductId(productEntity.getProductId().getProductId()); // Set product name

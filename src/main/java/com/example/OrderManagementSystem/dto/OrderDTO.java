@@ -8,5 +8,6 @@ import java.util.UUID;
 public class OrderDTO {
     private UUID userId;
     private UUID productId;
+    private UUID sellerId;
     private int quantity;
 }

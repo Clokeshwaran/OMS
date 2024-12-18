@@ -36,11 +36,12 @@ public class JwtFilter extends OncePerRequestFilter {
     private final User user;
 
     private static final AntPathRequestMatcher[] EXCLUDED_PATHS = { // Add the endpoints for public APIs which don't
-//            new AntPathRequestMatcher("gs-guide-websocket"),
-//            new AntPathRequestMatcher("/topic/greetings"),
-//            new AntPathRequestMatcher("/app/hello"),
-            new AntPathRequestMatcher("/lok"),
-            new AntPathRequestMatcher("/java-fx-file-upload")
+            new AntPathRequestMatcher("/new-order"),
+            new AntPathRequestMatcher("/order-history"),
+            new AntPathRequestMatcher("/create-product"),
+            new AntPathRequestMatcher("/New-User"),
+            new AntPathRequestMatcher("/user-order-data"),
+            new AntPathRequestMatcher("/new-seller")
 
     };
 
@@ -52,9 +53,9 @@ public class JwtFilter extends OncePerRequestFilter {
     public void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException, HttpClientErrorException {
 
-        JwtTokenManager jwtTokenManager = new JwtTokenManager();
-        UserDetails userDetails = user.loadUserByUsername("username");
-        System.out.println("TOKEN: "+ jwtTokenManager.generateJwtToken(userDetails));
+//        JwtTokenManager jwtTokenManager = new JwtTokenManager();
+//        UserDetails userDetails = user.loadUserByUsername("username");
+//        System.out.println("TOKEN: "+ jwtTokenManager.generateJwtToken(userDetails));
 
 
 //        response.setHeader(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, "*");
