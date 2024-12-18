@@ -6,7 +6,7 @@ import java.util.UUID;
 
 @Data
 public class OrdehistoryREQDTO {
-    private UUID userId;
+    private UUID id;
     private int page;
     private int pageSize;
     private String direction;

@@ -25,8 +25,13 @@ public class OrderEntity {
     @JoinColumn(name = "PRODUCT_ID", referencedColumnName = "ID")
     private ProductEntity productId;
 
+    @ManyToOne(targetEntity = SellerEntity.class, cascade = CascadeType.ALL)
+    @JoinColumn(name = "SELLER_ID", referencedColumnName = "ID")
+    private SellerEntity sellerId;
+
     @Column(name = "QUANTITY")
     private int quantity;
     @Column(name = "ORDER_DATE")
     private LocalDateTime orderDate;
+
 }

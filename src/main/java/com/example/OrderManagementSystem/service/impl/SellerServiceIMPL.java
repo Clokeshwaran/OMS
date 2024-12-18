@@ -60,12 +60,8 @@ public class SellerServiceIMPL implements SellerService {
 
     @Override
     public List<ProductsListDTO> listProducts(OrdehistoryREQDTO ordehistoryREQDTO) {
-//        List<ProductsListDTO> productsListDTOList = productEntityRepository.findAllBySellerId_id(id).stream()
-//                .map(productEntity -> modelMapper.map(productEntity, ProductsListDTO.class))
-//                .collect(Collectors.toList())
 
-
-        return productEntityRepository.findAllBySellerId_SellerId(ordehistoryREQDTO.getUserId()).stream()
+        return productEntityRepository.findAllBySellerId_SellerId(ordehistoryREQDTO.getId()).stream()
                 .map(productEntity -> modelMapper.map(productEntity, ProductsListDTO.class))
                 .collect(Collectors.toList());
     }

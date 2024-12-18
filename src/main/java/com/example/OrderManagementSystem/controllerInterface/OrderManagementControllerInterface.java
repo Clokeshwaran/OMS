@@ -1,11 +1,12 @@
 package com.example.OrderManagementSystem.controllerInterface;
 
-import com.example.OrderManagementSystem.dto.NewUserDTO;
+import com.example.OrderManagementSystem.dto.LoginDTO;
 import com.example.OrderManagementSystem.dto.OrdehistoryREQDTO;
 import com.example.OrderManagementSystem.dto.OrderDTO;
-import com.example.OrderManagementSystem.dto.OrderHistoryDTO;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 
 public interface OrderManagementControllerInterface {
     @PostMapping("/new-order")
@@ -13,8 +14,11 @@ public interface OrderManagementControllerInterface {
 
     @PostMapping("/order-history/{id}")
     ResponseEntity<?> orderHistory(@RequestBody OrdehistoryREQDTO ordehistoryREQDTO);//@RequestHeader(value = "Authorization") String token);
-//
-//    @PostMapping("/New-User")
-//    ResponseEntity<?> newUserRegister(@RequestBody NewUserDTO newUserDTO);
+
+    @PostMapping("/user-order-data")
+    public ResponseEntity<?> userOrderData(@RequestBody OrdehistoryREQDTO ordehistoryREQDTO);
+
+    @PostMapping("/login")
+    ResponseEntity<?> newUserRegister(@RequestBody LoginDTO loginDTO);
 
 }

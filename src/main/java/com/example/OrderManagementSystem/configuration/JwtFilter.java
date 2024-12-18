@@ -53,7 +53,7 @@ public class JwtFilter extends OncePerRequestFilter {
             throws ServletException, IOException, HttpClientErrorException {
 
         JwtTokenManager jwtTokenManager = new JwtTokenManager();
-        UserDetails userDetails = user.loadUserByUsername("ca4bf6c4-8e9c-47a9-b19c-a92056243bc0");
+        UserDetails userDetails = user.loadUserByUsername("username");
         System.out.println("TOKEN: "+ jwtTokenManager.generateJwtToken(userDetails));
 
 

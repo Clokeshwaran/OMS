@@ -2,12 +2,15 @@ package com.example.OrderManagementSystem.controller;
 
 import com.example.OrderManagementSystem.configuration.JwtTokenManager;
 import com.example.OrderManagementSystem.controllerInterface.OrderManagementControllerInterface;
+import com.example.OrderManagementSystem.dto.LoginDTO;
 import com.example.OrderManagementSystem.dto.OrdehistoryREQDTO;
 import com.example.OrderManagementSystem.dto.OrderDTO;
 import com.example.OrderManagementSystem.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.RestController;
 
+@RestController
 public class OrderManagementController implements OrderManagementControllerInterface {
     @Autowired
     JwtTokenManager tokenManager;
@@ -25,4 +28,16 @@ public class OrderManagementController implements OrderManagementControllerInter
 //        String userId = tokenManager.getUsernameFromToken(token);
         return orderService.orderHistory(ordehistoryREQDTO);
     }
+
+    @Override
+    public ResponseEntity<?> userOrderData(OrdehistoryREQDTO ordehistoryREQDTO) {
+//        String userId = tokenManager.getUsernameFromToken(token);
+        return orderService.orderData(ordehistoryREQDTO);
+    }
+
+    @Override
+    public ResponseEntity<?> newUserRegister(LoginDTO loginDTO) {
+        return orderService.login(loginDTO);
+    }
+
 }

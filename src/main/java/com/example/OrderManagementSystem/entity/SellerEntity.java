@@ -20,4 +20,9 @@ public class SellerEntity {
     private String email;
     @Column(name = "BUSINESS_NAME")
     private String businessName;
+    @ManyToOne(targetEntity = Role.class, cascade = CascadeType.ALL)
+    @JoinColumn(name = "ROLE", referencedColumnName = "id")
+    private Role role;
+    @Column(name = "PASSWORD")
+    private String password;
 }

@@ -21,5 +21,8 @@ public class UserEntity {
     private String email;
     @Column(name = "PASSWORD")
     private String password;
+    @ManyToOne(targetEntity = Role.class, cascade = CascadeType.ALL)
+    @JoinColumn(name = "ROLE", referencedColumnName = "id")
+    private Role role;
 
 }
