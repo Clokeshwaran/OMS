@@ -5,6 +5,7 @@ import com.example.OrderManagementSystem.dto.*;
 import com.example.OrderManagementSystem.entity.ProductEntity;
 import com.example.OrderManagementSystem.entity.SellerEntity;
 import com.example.OrderManagementSystem.repository.ProductEntityRepository;
+import com.example.OrderManagementSystem.repository.RoleRpository;
 import com.example.OrderManagementSystem.repository.SellerEntityRepository;
 import com.example.OrderManagementSystem.service.SellerService;
 import org.modelmapper.ModelMapper;
@@ -27,6 +28,8 @@ public class SellerServiceIMPL implements SellerService {
     @Autowired
     ModelMapper modelMapper;
     @Autowired
+    RoleRpository roleRpository;
+    @Autowired
     ProductEntityRepository productEntityRepository;
 
     @Override
@@ -44,6 +47,7 @@ public class SellerServiceIMPL implements SellerService {
         if(seller==null) {
             SellerEntity sellerEntity = modelMapper.map(sellerRegisterDTO, SellerEntity.class);
             sellerEntity.setSellerId(UUID.randomUUID());
+            sellerEntity.setRole(roleRpository.findById(2).get());
             sellerEntityRepository.save(sellerEntity);
             return ResponseEntity.status(HttpStatus.OK)
                     .body("Seller Registered success.");

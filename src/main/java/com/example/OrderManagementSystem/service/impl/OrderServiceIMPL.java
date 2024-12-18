@@ -138,14 +138,14 @@ public class OrderServiceIMPL implements OrderService {
         UserEntity userEntity = userEntityRepository.findByEmail(loginDTO.getEmail());
         if(userEntity==null){
             sellerEntity = sellerEntityRepository.findByEmail(loginDTO.getEmail());
-            if(!Objects.equals(sellerEntity.getEmail(), loginDTO.getEmail()) && !Objects.equals(sellerEntity.getPassword(), loginDTO.getPassword())){
+            if(sellerEntity.getEmail() != loginDTO.getEmail() && sellerEntity.getPassword() != loginDTO.getPassword()){
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                         .body("Invalid user credentials");
             }
             id = sellerEntity.getSellerId();
 
         }else {
-            if(!Objects.equals(userEntity.getEmail(), loginDTO.getEmail()) && !Objects.equals(userEntity.getPassword(), loginDTO.getPassword())){
+            if(!userEntity.getEmail().equals(loginDTO.getEmail()) || !userEntity.getPassword().equals(loginDTO.getPassword())){
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                         .body("Invalid user credentials");
             }
@@ -154,8 +154,21 @@ public class OrderServiceIMPL implements OrderService {
 
         TockenDTO tockenDTO = new TockenDTO();
         tockenDTO.setAccessToken(jwtTokenManager.generateJwtToken(user.loadUserByUsername(id.toString())));
+        tockenDTO.setRefreshToken(jwtTokenManager.generateRefreshToken(user.loadUserByUsername(id.toString())));
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(tockenDTO);
+    }
 
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body("Invalid user credentials");
+    public ResponseEntity<?> refreshToken(String token, String userId){
+        if(Boolean.TRUE.equals(jwtTokenManager.validateJwtToken(token, user.loadUserByUsername(userId)))){
+            TockenDTO tockenDTO = new TockenDTO();
+            tockenDTO.setAccessToken(jwtTokenManager.generateJwtToken(user.loadUserByUsername(userId)));
+            tockenDTO.setRefreshToken(jwtTokenManager.generateRefreshToken(user.loadUserByUsername(userId)));
+            return ResponseEntity.status(HttpStatus.OK)
+                    .body(tockenDTO);
+        }else {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body("Refresh Token Expired");
+        }
     }
 }

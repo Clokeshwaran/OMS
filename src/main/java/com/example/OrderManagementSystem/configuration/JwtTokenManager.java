@@ -93,5 +93,15 @@ public class JwtTokenManager implements Serializable {
                 .getBody();
     }
 
+    // Refresh Token Generation (Long-lived)
+    public String generateRefreshToken(UserDetails userDetails) {
+        return Jwts.builder()
+                .setSubject(userDetails.getUsername()) // Only include user identifier
+                .setIssuedAt(new Date(System.currentTimeMillis()))
+                .setExpiration(new Date(System.currentTimeMillis() + 7 * 24 * 60 * 60 * 1000)) // 7 days
+                .signWith(SignatureAlgorithm.HS512, secret)
+                .compact();
+    }
+
 
 }

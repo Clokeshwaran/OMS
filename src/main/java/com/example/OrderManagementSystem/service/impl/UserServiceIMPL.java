@@ -3,8 +3,8 @@ package com.example.OrderManagementSystem.service.impl;
 import com.example.OrderManagementSystem.constant.Constant;
 import com.example.OrderManagementSystem.dto.NewUserDTO;
 import com.example.OrderManagementSystem.dto.UserDataDTO;
-import com.example.OrderManagementSystem.entity.SellerEntity;
 import com.example.OrderManagementSystem.entity.UserEntity;
+import com.example.OrderManagementSystem.repository.RoleRpository;
 import com.example.OrderManagementSystem.repository.UserEntityRepository;
 import com.example.OrderManagementSystem.service.UserService;
 import org.modelmapper.ModelMapper;
@@ -23,6 +23,8 @@ public class UserServiceIMPL implements UserService {
     @Autowired
     UserEntityRepository userEntityRepository;
     @Autowired
+    RoleRpository roleRpository;
+    @Autowired
     ModelMapper modelMapper;
 
 
@@ -38,15 +40,16 @@ public class UserServiceIMPL implements UserService {
         }
         UserEntity user = userEntityRepository.findByEmail(newUserDTO.getEmail());
 
-        if(user==null) {
+        if (user == null) {
             UserEntity userEntity = modelMapper.map(newUserDTO, UserEntity.class);
             userEntity.setUserId(UUID.randomUUID());
+            userEntity.setRole(roleRpository.findById(1).get());
             userEntityRepository.save(userEntity);
             return ResponseEntity.status(HttpStatus.OK)
                     .body("User Registered success.");
-        }else
+        } else
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body("User is already exists");
+                    .body("User is already exists");
     }
 
     @Override

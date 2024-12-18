@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.*;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
 import java.util.UUID;
 
 
@@ -28,22 +29,21 @@ public class User implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String userId) throws UsernameNotFoundException {
 
-        SellerEntity sellerEntity;
         String username;
         String password;
         String role;
 
-        UserEntity userEntity = userEntityRepository.findById(UUID.fromString(userId)).get();
-        if(userEntity==null){
-            sellerEntity = sellerEntityRepository.findById(UUID.fromString(userId)).get();
-            username = sellerEntity.getEmail();
+        Optional<UserEntity> userEntity = userEntityRepository.findById(UUID.fromString(userId));
+        if(userEntity.isEmpty()){
+            SellerEntity sellerEntity = sellerEntityRepository.findById(UUID.fromString(userId)).get();
+            username = String.valueOf(sellerEntity.getSellerId());
             password = sellerEntity.getPassword();
             role = sellerEntity.getRole().getRole();
 
         }else {
-             username = userEntity.getEmail();
-             password = userEntity.getPassword();
-             role = userEntity.getRole().getRole();
+             username = userEntity.get().getUserId().toString();
+             password = userEntity.get().getPassword();
+             role = userEntity.get().getRole().getRole();
         }
 
         return org.springframework.security.core.userdetails.User.builder()

@@ -41,7 +41,8 @@ public class JwtFilter extends OncePerRequestFilter {
             new AntPathRequestMatcher("/create-product"),
             new AntPathRequestMatcher("/New-User"),
             new AntPathRequestMatcher("/user-order-data"),
-            new AntPathRequestMatcher("/new-seller")
+            new AntPathRequestMatcher("/new-seller"),
+            new AntPathRequestMatcher("/login")
 
     };
 

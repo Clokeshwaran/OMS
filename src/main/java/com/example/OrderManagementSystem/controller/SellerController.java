@@ -9,6 +9,7 @@ import com.example.OrderManagementSystem.service.SellerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -31,12 +32,14 @@ public class SellerController implements SellerControllerInterface {
     }
 
     @Override
+    @PreAuthorize("hasRole('Seller')")
     public ResponseEntity<?> getSeller(UUID id) {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(sellerService.sellerData(id));
     }
 
     @Override
+    @PreAuthorize("hasRole('ROLE_Seller')")
     public ResponseEntity<?> ListProducts(OrdehistoryREQDTO ordehistoryREQDTO) {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(sellerService.listProducts(ordehistoryREQDTO));

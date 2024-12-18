@@ -1,7 +1,11 @@
 package com.example.OrderManagementSystem.configuration;
 
+import com.example.OrderManagementSystem.exception.CustomAccessDenied;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -18,9 +22,14 @@ import java.util.List;
 
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity // Replaces @EnableGlobalMethodSecurity
+
 public class SecurityConfig {
 
-    private final JwtFilter jwtAuthenticationFilter;
+    @Autowired
+    CustomAccessDenied accessDeniedHandler;
+    @Autowired
+    JwtFilter jwtAuthenticationFilter;
     //    private final UserService userService
 //    private final UserDetailsService userDetailsService
 //    private final JwtAuthenticationEntryPoint authenticationEntryPoint
@@ -39,9 +48,10 @@ public class SecurityConfig {
                 .cors(cors -> cors.configurationSource(configurationSource()))
                 .authorizeHttpRequests(req -> {
                     req.requestMatchers("/admin/**").hasRole("Admin");
-                    req.requestMatchers("/v2/api-docs", "/swagger-resources/**", "/swagger-ui.html", "/webjars/**").permitAll();
+//                    req.requestMatchers("/v2/api-docs", "/swagger-resources/**", "/swagger-ui.html", "/webjars/**").permitAll();
                     req.anyRequest().permitAll();
                 })
+                .exceptionHandling(exception -> exception.accessDeniedHandler(accessDeniedHandler)) // Add custom access denied handler
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
