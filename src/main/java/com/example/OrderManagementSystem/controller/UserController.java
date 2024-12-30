@@ -22,7 +22,6 @@ public class UserController implements UserControllerInterface {
 
     @Override
     public ResponseEntity<?> getUser(String id) {
-        return ResponseEntity.status(HttpStatus.OK)
-                .body(userService.userData(UUID.fromString(id)));
+        return userService.userData(UUID.fromString(id));
     }
 }

@@ -8,5 +8,5 @@ public class SellerRegisterDTO {
     private String name;
     private String email;
     private String businessName;
-//    private String password;
+    private String password;
 }

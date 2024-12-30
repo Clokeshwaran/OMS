@@ -9,6 +9,7 @@ import java.util.UUID;
 public interface UserService {
 
     public ResponseEntity<?> userRegister(NewUserDTO newUserDTO);
-    public UserDataDTO userData(UUID id);
+
+    public ResponseEntity<?> userData(UUID id);
 
 }

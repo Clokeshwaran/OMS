@@ -7,7 +7,9 @@ import com.example.OrderManagementSystem.repository.SellerEntityRepository;
 import com.example.OrderManagementSystem.repository.UserEntityRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.*;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -17,8 +19,6 @@ import java.util.UUID;
 @Service
 @RequiredArgsConstructor
 public class User implements UserDetailsService {
-
-//    private final UserRepoServiceIMPL userRepoServiceIMPL
 
     @Autowired
     UserEntityRepository userEntityRepository;
@@ -34,16 +34,16 @@ public class User implements UserDetailsService {
         String role;
 
         Optional<UserEntity> userEntity = userEntityRepository.findById(UUID.fromString(userId));
-        if(userEntity.isEmpty()){
+        if (userEntity.isEmpty()) {
             SellerEntity sellerEntity = sellerEntityRepository.findById(UUID.fromString(userId)).get();
-            username = String.valueOf(sellerEntity.getSellerId());
+            username = sellerEntity.getEmail();
             password = sellerEntity.getPassword();
             role = sellerEntity.getRole().getRole();
 
-        }else {
-             username = userEntity.get().getUserId().toString();
-             password = userEntity.get().getPassword();
-             role = userEntity.get().getRole().getRole();
+        } else {
+            username = userEntity.get().getEmail();
+            password = userEntity.get().getPassword();
+            role = userEntity.get().getRole().getRole();
         }
 
         return org.springframework.security.core.userdetails.User.builder()

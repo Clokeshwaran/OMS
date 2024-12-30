@@ -5,13 +5,14 @@ import com.example.OrderManagementSystem.dto.*;
 import com.example.OrderManagementSystem.entity.ProductEntity;
 import com.example.OrderManagementSystem.entity.SellerEntity;
 import com.example.OrderManagementSystem.repository.ProductEntityRepository;
-import com.example.OrderManagementSystem.repository.RoleRpository;
+import com.example.OrderManagementSystem.repository.RoleRepository;
 import com.example.OrderManagementSystem.repository.SellerEntityRepository;
 import com.example.OrderManagementSystem.service.SellerService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -28,7 +29,9 @@ public class SellerServiceIMPL implements SellerService {
     @Autowired
     ModelMapper modelMapper;
     @Autowired
-    RoleRpository roleRpository;
+    RoleRepository roleRepository;
+    @Autowired
+    PasswordEncoder passwordEncoder;
     @Autowired
     ProductEntityRepository productEntityRepository;
 
@@ -44,15 +47,19 @@ public class SellerServiceIMPL implements SellerService {
         }
         SellerEntity seller = sellerEntityRepository.findByEmail(sellerRegisterDTO.getEmail());
 
-        if(seller==null) {
-            SellerEntity sellerEntity = modelMapper.map(sellerRegisterDTO, SellerEntity.class);
+        if (seller == null) {
+            SellerEntity sellerEntity = new SellerEntity();//modelMapper.map(sellerRegisterDTO, SellerEntity.class);
+            sellerEntity.setName(sellerRegisterDTO.getName());
+            sellerEntity.setPassword(passwordEncoder.encode(sellerRegisterDTO.getPassword()));
+            sellerEntity.setEmail(sellerRegisterDTO.getEmail());
+            sellerEntity.setBusinessName(sellerRegisterDTO.getBusinessName());
+
             sellerEntity.setSellerId(UUID.randomUUID());
-            sellerEntity.setRole(roleRpository.findById(2).get());
+            sellerEntity.setRole(roleRepository.findById(2).get());
             sellerEntityRepository.save(sellerEntity);
             return ResponseEntity.status(HttpStatus.OK)
                     .body("Seller Registered success.");
-        }
-        else
+        } else
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body("Seller is already exists");
     }

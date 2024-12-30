@@ -16,11 +16,5 @@ public class CustomAccessDenied implements AccessDeniedHandler {
         httpServletResponse.setStatus(HttpServletResponse.SC_FORBIDDEN);
         httpServletResponse.setContentType("application/json");
         httpServletResponse.getWriter().write("{\"error\": \"Access `Denied`: " + e.getMessage() + "\"}");
-
-//        ApiResponseDTO apiResponseDTO = new ApiResponseDTO()
-//        apiResponseDTO.setMessage("{\"error\": \"Access Denied: " + e.getMessage() + "\"}")
-//        apiResponseDTO.setStatus(HttpStatus.valueOf(HttpServletResponse.SC_FORBIDDEN))
-//        apiResponseDTO.setIsSuccess(false)
-//        apiResponseDTO.setData("")
     }
 }

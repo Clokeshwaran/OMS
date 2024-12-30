@@ -61,7 +61,7 @@ public class JwtFilter extends OncePerRequestFilter {
 
 //        response.setHeader(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, "*");
 //        response.setHeader(HttpHeaders.ACCESS_CONTROL_ALLOW_HEADERS, "*");
-        response.setHeader("X-Frame-Options", "DENY");
+//        response.setHeader("X-Frame-Options", "DENY");
         response.setHeader(HttpHeaders.ACCESS_CONTROL_ALLOW_METHODS, "GET, POST, PUT, DELETE");
 
         if (request.getMethod().equals("HEAD") || request.getMethod().equals("TRACE")) {
@@ -89,12 +89,12 @@ public class JwtFilter extends OncePerRequestFilter {
                                               FilterChain filterChain)
             throws IOException, ServletException {
         String tokenHeader = request.getHeader("Authorization");
-        if (tokenHeader == null || tokenHeader.isEmpty()) {
-            logger.info("Bearer String not found in token");
-            request.setAttribute("blank-token", "Token not found");
-            exceptionThrow(response, "Token not provided");
-            return;
-        }
+//        if (tokenHeader == null || tokenHeader.isEmpty()) {
+//            logger.info("Bearer String not found in token");
+//            request.setAttribute("blank-token", "Token not found");
+//            exceptionThrow(response, "Token not provided");
+//            return;
+//        }
 
         if (Boolean.FALSE.equals(checkTokenHeader(tokenHeader))) {
             logger.info("Bearer String not found in token");
@@ -153,20 +153,6 @@ public class JwtFilter extends OncePerRequestFilter {
         authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
         SecurityContextHolder.getContext().setAuthentication(authenticationToken);
     }
-
-//    @Override
-//    protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
-//        List<String> skipFilterUrls = Arrays.asList("/usermanagement/swagger-ui/**",
-//                "/usermanagement/swagger-resources",
-//                "/usermanagement/swagger-resources/**", "/usermanagement/v2/api-docs/**",
-//                "/usermanagement/v2/api-docs");
-//
-//        return skipFilterUrls.stream().anyMatch(url -> {
-//            AntPathMatcher antPathMatcher = new AntPathMatcher(url);
-//            antPathMatcher.setPathSeparator(",");
-//            return antPathMatcher.matchStart(url, request.getRequestURI());
-//        });
-//    }
 
     private void exceptionThrow(HttpServletResponse response, String message) throws IOException {
         Gson gson = new Gson();

@@ -1,35 +1,37 @@
 package com.example.OrderManagementSystem.configuration;
 
+import com.example.OrderManagementSystem.entity.UserEntity;
 import com.example.OrderManagementSystem.exception.CustomException;
+import com.example.OrderManagementSystem.repository.UserEntityRepository;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
-import java.io.Serial;
-import java.io.Serializable;
 import java.util.Date;
 import java.util.HashMap;
 
 @Component
-public class JwtTokenManager implements Serializable {
+public class JwtTokenManager {
+    @Autowired
+    UserEntityRepository userEntityRepository;
 
-    /**
-     *
-     */
 
-    @Serial
     private static final long serialVersionUID = 1L;
 
-    private static final int TOKEN_VALIDITY = 24 * 60 * 60;
-
-    private String secret = "assdfghjklzxcvbnm,ppppppoiuytq1234567890-/lok00o0-9kl";
+    private String secret = "T%y3Ku@z7F9#1p!X2LQwCv*RBvP4q&6Md^aZGnH4xJY5oW#";
 
     public String generateJwtToken(UserDetails userDetails) {
-        HashMap<String, Object> claims = new HashMap<>();
 
+        UserEntity userEntity = userEntityRepository.findByEmail(userDetails.getUsername());
+        HashMap<String, Object> claims = new HashMap<>();
+        // Add additional claims
+        claims.put("userId", userEntity.getUserId());
+        claims.put("email", userEntity.getEmail());
+        claims.put("role", userEntity.getRole().getRole());
         return Jwts.builder()
                 .setClaims(claims)
                 .setSubject(userDetails.getUsername())
@@ -39,10 +41,6 @@ public class JwtTokenManager implements Serializable {
                 .compact();
     }
 
-    //    private Key getSignKey() {
-//        byte[] keyBytes = JWT_SECRET.getBytes();
-//        return Keys.hmacShaKeyFor(keyBytes);
-//    }
     public Boolean validateJwtToken(String token, UserDetails userDetails) {
         String username = getUsernameFromToken(token);
         final Claims claims = getClaims(token);
@@ -93,7 +91,7 @@ public class JwtTokenManager implements Serializable {
                 .getBody();
     }
 
-    // Refresh Token Generation (Long-lived)
+    // Refresh Token Generation
     public String generateRefreshToken(UserDetails userDetails) {
         return Jwts.builder()
                 .setSubject(userDetails.getUsername()) // Only include user identifier

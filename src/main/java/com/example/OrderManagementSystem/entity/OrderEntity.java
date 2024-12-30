@@ -12,7 +12,6 @@ public class OrderEntity {
 
 
     @Id
-//    @GeneratedValue(generator = "uuid")
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "ID", updatable = false, nullable = false)
     private UUID orderId;

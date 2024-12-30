@@ -1,7 +1,6 @@
 package com.example.OrderManagementSystem.controllerInterface;
 
 import com.example.OrderManagementSystem.dto.CreateProductDTO;
-import com.example.OrderManagementSystem.dto.NewUserDTO;
 import com.example.OrderManagementSystem.dto.OrdehistoryREQDTO;
 import com.example.OrderManagementSystem.dto.SellerRegisterDTO;
 import org.springframework.http.ResponseEntity;

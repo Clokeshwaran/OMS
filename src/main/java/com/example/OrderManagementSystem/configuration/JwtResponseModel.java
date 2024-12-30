@@ -4,10 +4,6 @@ package com.example.OrderManagementSystem.configuration;
 import java.io.Serializable;
 
 public class JwtResponseModel implements Serializable{
-
-    /**
-     *
-     */
     private static final long serialVersionUID = 1L;
     private final String token;
 

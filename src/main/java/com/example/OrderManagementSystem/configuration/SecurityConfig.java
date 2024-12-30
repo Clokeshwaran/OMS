@@ -4,12 +4,16 @@ import com.example.OrderManagementSystem.exception.CustomAccessDenied;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
@@ -22,24 +26,25 @@ import java.util.List;
 
 @Configuration
 @EnableWebSecurity
-@EnableMethodSecurity // Replaces @EnableGlobalMethodSecurity
-
+@EnableMethodSecurity
 public class SecurityConfig {
 
     @Autowired
     CustomAccessDenied accessDeniedHandler;
     @Autowired
     JwtFilter jwtAuthenticationFilter;
-    //    private final UserService userService
-//    private final UserDetailsService userDetailsService
-//    private final JwtAuthenticationEntryPoint authenticationEntryPoint
 
     public SecurityConfig(JwtFilter jwtAuthenticationFilter) {
         this.jwtAuthenticationFilter = jwtAuthenticationFilter;
-//        this.userService = userService
-//        this.userDetailsService = userDetailsService
-//        this.authenticationEntryPoint = authenticationEntryPoint
     }
+
+
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
+
+
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -47,8 +52,8 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(cors -> cors.configurationSource(configurationSource()))
                 .authorizeHttpRequests(req -> {
-                    req.requestMatchers("/admin/**").hasRole("Admin");
-//                    req.requestMatchers("/v2/api-docs", "/swagger-resources/**", "/swagger-ui.html", "/webjars/**").permitAll();
+//                    req.requestMatchers("/admin/**").;
+//                    req.requestMatchers("/v2/api-docs", "/swagger-resources/**", "/swagger-ui.html", "/webjars/**").hasRole("/user");
                     req.anyRequest().permitAll();
                 })
                 .exceptionHandling(exception -> exception.accessDeniedHandler(accessDeniedHandler)) // Add custom access denied handler

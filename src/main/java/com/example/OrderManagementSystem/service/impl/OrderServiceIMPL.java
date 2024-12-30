@@ -19,10 +19,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
@@ -42,6 +43,8 @@ public class OrderServiceIMPL implements OrderService {
     @Autowired
     ModelMapper modelMapper;
     @Autowired
+    PasswordEncoder passwordEncoder;
+    @Autowired
     User user;
     @Autowired
     JwtTokenManager jwtTokenManager;
@@ -50,17 +53,17 @@ public class OrderServiceIMPL implements OrderService {
     public ResponseEntity<?> placeOrder(OrderDTO orderDTO) {
 
         Optional<ProductEntity> productEntity = productEntityRepository.findById(orderDTO.getProductId());
-        if(productEntity.isEmpty()){
+        if (productEntity.isEmpty()) {
             return ResponseEntity.status(HttpStatus.OK)
                     .body("Product not available");
         }
         Optional<UserEntity> user = userEntityRepository.findById(orderDTO.getUserId());
-        if(user.isEmpty()){
+        if (user.isEmpty()) {
             return ResponseEntity.status(HttpStatus.OK)
                     .body("User not fount");
         }
         Optional<SellerEntity> seller = sellerEntityRepository.findById(orderDTO.getSellerId());
-        if(seller.isEmpty()){
+        if (seller.isEmpty()) {
             return ResponseEntity.status(HttpStatus.OK)
                     .body("seller not fount");
         }
@@ -83,7 +86,7 @@ public class OrderServiceIMPL implements OrderService {
     public ResponseEntity<?> orderHistory(OrdehistoryREQDTO ordehistoryREQDTO) {
 
         Sort.Direction direction = Sort.Direction.DESC;
-        if(Objects.equals(ordehistoryREQDTO.getDirection(), "asc"))
+        if (Objects.equals(ordehistoryREQDTO.getDirection(), "asc"))
             direction = Sort.Direction.ASC;
 
         Sort sort = Sort.by(direction, "orderDate");
@@ -105,7 +108,7 @@ public class OrderServiceIMPL implements OrderService {
     @Override
     public ResponseEntity<?> orderData(OrdehistoryREQDTO ordehistoryREQDTO) {
         Sort.Direction direction = Sort.Direction.DESC;
-        if(Objects.equals(ordehistoryREQDTO.getDirection(), "asc"))
+        if (Objects.equals(ordehistoryREQDTO.getDirection(), "asc"))
             direction = Sort.Direction.ASC;
 
         Sort sort = Sort.by(direction, "orderDate");
@@ -124,49 +127,57 @@ public class OrderServiceIMPL implements OrderService {
                     return dto;
                 })
                 .collect(Collectors.toList()));
-//        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(orderEntityRepository.findAllBySellerId_SellerId(ordehistoryREQDTO.getId(), pageable).stream()
-//                .map(productEntity -> modelMapper.map(productEntity, UserOrderDTO.class))
-//                .collect(Collectors.toList()));
     }
 
     @Override
     public ResponseEntity<?> login(LoginDTO loginDTO) {
+        // Retrieve user or seller by email
 
+        UserEntity userEntity;
         SellerEntity sellerEntity;
         UUID id;
-
-        UserEntity userEntity = userEntityRepository.findByEmail(loginDTO.getEmail());
-        if(userEntity==null){
-            sellerEntity = sellerEntityRepository.findByEmail(loginDTO.getEmail());
-            if(sellerEntity.getEmail() != loginDTO.getEmail() && sellerEntity.getPassword() != loginDTO.getPassword()){
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                        .body("Invalid user credentials");
-            }
-            id = sellerEntity.getSellerId();
-
-        }else {
-            if(!userEntity.getEmail().equals(loginDTO.getEmail()) || !userEntity.getPassword().equals(loginDTO.getPassword())){
+        // Validate credentials
+        if (Objects.equals(loginDTO.getRole(), "User")) {
+            userEntity = userEntityRepository.findByEmail(loginDTO.getEmail());
+            if (userEntity == null || !userEntity.getEmail().equals(loginDTO.getEmail()) ||
+                    !passwordEncoder.matches(loginDTO.getPassword(), userEntity.getPassword())) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                         .body("Invalid user credentials");
             }
             id = userEntity.getUserId();
+        } else if (Objects.equals(loginDTO.getRole(), "Seller")) {
+            sellerEntity = sellerEntityRepository.findByEmail(loginDTO.getEmail());
+
+
+            if (sellerEntity==null || !sellerEntity.getEmail().equals(loginDTO.getEmail()) ||
+                    !passwordEncoder.matches(loginDTO.getPassword(), sellerEntity.getPassword())) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                        .body("Invalid user credentials");
+            }
+            id = sellerEntity.getSellerId();
+        } else {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body("Invalid user credentials");
         }
 
-        TockenDTO tockenDTO = new TockenDTO();
-        tockenDTO.setAccessToken(jwtTokenManager.generateJwtToken(user.loadUserByUsername(id.toString())));
-        tockenDTO.setRefreshToken(jwtTokenManager.generateRefreshToken(user.loadUserByUsername(id.toString())));
-        return ResponseEntity.status(HttpStatus.OK)
-                .body(tockenDTO);
+        // Generate JWT tokens
+        UserDetails userDetails = user.loadUserByUsername(id.toString());
+        TockenDTO tokenDTO = new TockenDTO();
+        tokenDTO.setAccessToken(jwtTokenManager.generateJwtToken(userDetails));
+        tokenDTO.setRefreshToken(jwtTokenManager.generateRefreshToken(userDetails));
+
+        return ResponseEntity.ok(tokenDTO);
     }
 
-    public ResponseEntity<?> refreshToken(String token, String userId){
-        if(Boolean.TRUE.equals(jwtTokenManager.validateJwtToken(token, user.loadUserByUsername(userId)))){
+
+    public ResponseEntity<?> refreshToken(String token, String userId) {
+        if (Boolean.TRUE.equals(jwtTokenManager.validateJwtToken(token, user.loadUserByUsername(userId)))) {
             TockenDTO tockenDTO = new TockenDTO();
             tockenDTO.setAccessToken(jwtTokenManager.generateJwtToken(user.loadUserByUsername(userId)));
             tockenDTO.setRefreshToken(jwtTokenManager.generateRefreshToken(user.loadUserByUsername(userId)));
             return ResponseEntity.status(HttpStatus.OK)
                     .body(tockenDTO);
-        }else {
+        } else {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body("Refresh Token Expired");
         }

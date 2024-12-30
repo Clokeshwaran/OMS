@@ -2,7 +2,6 @@ package com.example.OrderManagementSystem.controller;
 
 import com.example.OrderManagementSystem.controllerInterface.SellerControllerInterface;
 import com.example.OrderManagementSystem.dto.CreateProductDTO;
-import com.example.OrderManagementSystem.dto.NewUserDTO;
 import com.example.OrderManagementSystem.dto.OrdehistoryREQDTO;
 import com.example.OrderManagementSystem.dto.SellerRegisterDTO;
 import com.example.OrderManagementSystem.service.SellerService;
@@ -22,7 +21,7 @@ public class SellerController implements SellerControllerInterface {
     SellerService sellerService;
 
     @GetMapping("/get")
-    public String Test(){
+    public String Test() {
         return "Ok";
     }
 
@@ -46,6 +45,7 @@ public class SellerController implements SellerControllerInterface {
     }
 
     @Override
+    @PreAuthorize("hasRole('ROLE_Seller')")
     public ResponseEntity<?> sellerCreateProduct(CreateProductDTO createProductDTO) {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(sellerService.sellerCreateProduct(createProductDTO));

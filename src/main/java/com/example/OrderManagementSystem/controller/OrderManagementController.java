@@ -19,19 +19,16 @@ public class OrderManagementController implements OrderManagementControllerInter
 
     @Override
     public ResponseEntity<?> PlaceOrder(OrderDTO orderDTO, String token) {
-//        String userId = tokenManager.getUsernameFromToken(token);
         return orderService.placeOrder(orderDTO);
     }
 
     @Override
     public ResponseEntity<?> orderHistory(OrdehistoryREQDTO ordehistoryREQDTO) {
-//        String userId = tokenManager.getUsernameFromToken(token);
         return orderService.orderHistory(ordehistoryREQDTO);
     }
 
     @Override
     public ResponseEntity<?> userOrderData(OrdehistoryREQDTO ordehistoryREQDTO) {
-//        String userId = tokenManager.getUsernameFromToken(token);
         return orderService.orderData(ordehistoryREQDTO);
     }
 
